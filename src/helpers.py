@@ -1,6 +1,5 @@
 import os
 import typing
-from pathlib import Path
 
 
 def extract_extension_from_file_path(path: str) -> str:
