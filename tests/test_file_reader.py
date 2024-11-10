@@ -21,3 +21,7 @@ def sample_directory(tmp_path):
 def test_read_folder_contents_return_correct_number_of_items(sample_directory):
     files = file_reader.read_file_contents(sample_directory)
     assert len(files) == 4
+
+def test_read_folder_contents_handles_empty_directory(tmp_path):
+    files = file_reader.read_file_contents(tmp_path)
+    assert len(files) == 0

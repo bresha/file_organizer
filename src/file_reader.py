@@ -4,5 +4,4 @@ from pathlib import Path
 
 
 def read_file_contents(path: str | Path) -> list:
-    files = os.listdir(path)
-    return files
+    return os.listdir(path)
