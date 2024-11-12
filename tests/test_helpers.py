@@ -1,6 +1,8 @@
 import os
 from unittest.mock import patch
 import pytest
+import tempfile
+import stat
 
 from src import helpers
 
@@ -43,6 +45,42 @@ def test_move_file_to_folder():
         
         # Assert the returned path is correct
         assert new_file_path == expected_path
+
+def test_move_file_to_folder_throws_permission_denied():
+    # Arrange
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        test_file = os.path.join(tmp_dir, "test_file.txt")
+        with open(test_file, "w") as f:
+            f.write("Test content")
+
+        dest_folder = os.path.join(tmp_dir, "dest_folder")
+        os.makedirs(dest_folder)
+        os.chmod(dest_folder, stat.S_IREAD)
+
+        # Act and assert
+        with pytest.raises(PermissionError):
+            helpers.move_file_to_folder(test_file, dest_folder)
+        
+        # Cleanup
+        os.chmod(dest_folder, stat.S_IRWXU)
+
+def test_move_file_to_folder_source_permission_denied():
+    # Arrange
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        # Create test file with no write permissions
+        test_file = os.path.join(tmp_dir, "test_file.txt")
+        with open(test_file, "w") as f:
+            f.write("Test content")
+        os.chmod(test_file, 0o444)
+
+        dest_folder = os.path.join(tmp_dir, "dest_folder")
+
+        # Act and assert
+        with pytest.raises(PermissionError):
+            helpers.move_file_to_folder(test_file, dest_folder)
+
+        # Cleanup
+        os.chmod(test_file, stat.S_IRWXU)
 
 def test_create_destination_folder_path():
     user_provided_path = "path/to/folder"
