@@ -43,3 +43,10 @@ def test_move_file_to_folder():
         
         # Assert the returned path is correct
         assert new_file_path == expected_path
+
+def test_create_destination_folder_path():
+    user_provided_path = "path/to/folder"
+    extension = "txt"
+    expected_path = os.path.join(user_provided_path, extension)
+    actual_path = helpers.create_destination_folder_path(user_provided_path, extension)
+    assert actual_path == expected_path

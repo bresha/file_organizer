@@ -14,3 +14,6 @@ def move_file_to_folder(file_path: str, destination_folder: str) -> None:
         os.makedirs(destination_folder)
     new_path = shutil.move(file_path, os.path.join(destination_folder, os.path.basename(file_path)))
     return new_path
+
+def create_destination_folder_path(user_provided_path: str, extension: str) -> str:
+    return os.path.join(user_provided_path, extension)
