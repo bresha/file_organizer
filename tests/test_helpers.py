@@ -35,11 +35,18 @@ def test_move_file_to_folder():
     # Using patch to mock the actual file moving operation
     with patch('shutil.move') as mock_move, \
          patch('os.path.exists') as mock_exists, \
-         patch('os.makedirs') as mock_makedirs:
+         patch('os.makedirs') as mock_makedirs, \
+         patch('os.stat') as mock_stat:
         
         # Configure the mocks
         mock_exists.return_value = True  # Pretend the directory exists
         mock_move.return_value = expected_path  # Set the return value for move
+        
+        # Mock stat result with full permissions
+        mock_stat_result = type('MockStatResult', (), {
+            'st_mode': 0o777  # Full read/write/execute permissions
+        })()
+        mock_stat.return_value = mock_stat_result
         
         new_file_path = helpers.move_file_to_folder(file_path, folder_path)
         
